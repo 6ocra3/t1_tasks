@@ -50,14 +50,33 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.2</version> <!-- Используйте актуальную версию -->
+            <version>42.7.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version> <!-- Актуальную версию можно найти на Maven Central -->
+            <version>1.18.30</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring AOP для поддержки аспектов -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- SLF4J Logger (для логирования) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <!-- Log4j2 (по желанию для логирования, если нужно заменить Logback на Log4j2) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

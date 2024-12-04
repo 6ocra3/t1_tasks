@@ -1,5 +1,9 @@
 package org.makar.t1_tasks.controller;
 
+import org.makar.t1_tasks.aspect.annotation.LogError;
+import org.makar.t1_tasks.aspect.annotation.LogResult;
+import org.makar.t1_tasks.aspect.annotation.LogTimeExecution;
+import org.makar.t1_tasks.aspect.annotation.ValidateId;
 import org.makar.t1_tasks.model.Task;
 import org.makar.t1_tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +21,33 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    @LogResult
+    public List<Task> GetAllTasks() {
+        return taskService.GetAllTasks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Optional<Task> task = taskService.getTaskById(id);
+    @ValidateId
+    public ResponseEntity<Task> GetTaskById(@PathVariable Long id) {
+        Optional<Task> task = taskService.GetTaskById(id);
         return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskService.createTask(task);
+    public Task GreateTask(@RequestBody Task task) {
+        return taskService.CreateTask(task);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
-        return ResponseEntity.ok(taskService.updateTask(id, taskDetails));
+    @LogError
+    public ResponseEntity<Task> UpdateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+        return ResponseEntity.ok(taskService.UpdateTask(id, taskDetails));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
+    @LogTimeExecution
+    public ResponseEntity<Void> DeleteTask(@PathVariable Long id) {
+        taskService.DeleteTask(id);
         return ResponseEntity.noContent().build();
     }
 
