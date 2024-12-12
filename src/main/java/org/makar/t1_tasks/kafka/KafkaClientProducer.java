@@ -25,7 +25,14 @@ public class KafkaClientProducer {
 
     public void sendTo(String topic, Object o) {
         try {
-            template.send(topic, o).get();
+            template.send(topic, o)
+                    .whenComplete((result, exception) -> {
+                        if (exception != null) {
+                            log.error("Error sending message to topic {} {}", topic, exception);
+                        } else {
+                            log.info("Message sent successfully to topic {}: {}", topic, result);
+                        }
+                    });
             template.flush();
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
