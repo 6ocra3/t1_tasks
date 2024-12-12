@@ -19,7 +19,7 @@ public class KafkaClientConsumer {
 
     private final NotificationService notificationService;
 
-    @KafkaListener(id = "t1-demo",
+    @KafkaListener(id = "t1-tasks",
             topics = "t1_tasks_update_status",
             containerFactory = "kafkaListenerContainerFactory")
     public void listener(@Payload TaskDto message,

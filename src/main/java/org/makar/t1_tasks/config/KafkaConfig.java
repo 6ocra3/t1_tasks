@@ -29,10 +29,10 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
-    @Value("${t1-demo}")
+    @Value("${t1-tasks}")
     private String groupId;
 
-    @Value("${localhost:9092}")
+    @Value("${t1_tasks.kafka.localhost:9092}")
     private String servers;
 
     @Value("${t1.kafka.session.timeout.ms:15000}")
@@ -47,7 +47,7 @@ public class KafkaConfig {
     @Value("${t1.kafka.max.poll.interval.ms:3000}")
     private String maxPollIntervalsMs;
 
-    @Value("${t1_demo_client_registered}")
+    @Value("${t1_tasks_default_topic}")
     private String clientTopic;
 
     @Bean
@@ -102,8 +102,8 @@ public class KafkaConfig {
     }
 
     @Bean("client")
-    public KafkaTemplate<String, TaskDto> kafkaTemplate(ProducerFactory<String, TaskDto> producerPatFactory) {
-        return new KafkaTemplate<>(producerPatFactory);
+    public KafkaTemplate<String, TaskDto> kafkaTemplate(@Qualifier("producerClientFactory") ProducerFactory<String, TaskDto> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
@@ -114,7 +114,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, String> producerClientFactory() {
+    public ProducerFactory<String, TaskDto> producerClientFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
