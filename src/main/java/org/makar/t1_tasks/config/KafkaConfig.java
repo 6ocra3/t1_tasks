@@ -5,7 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.makar.t1_tasks.dto.TaskDto;
+import org.makar.t1_tasks.dto.TaskStatusUpdateDto;
 import org.makar.t1_tasks.kafka.KafkaClientProducer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,14 +51,14 @@ public class KafkaConfig {
     private String clientTopic;
 
     @Bean
-    public ConsumerFactory<String, TaskDto> consumerListenerFactory() {
+    public <T> ConsumerFactory<String, T> createConsumerFactory(Class<T> dtoClass) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.makar.t1_tasks.dto.TaskDto");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, dtoClass.getName());
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeout);
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, maxPartitionFetchBytes);
@@ -67,16 +67,20 @@ public class KafkaConfig {
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        DefaultKafkaConsumerFactory factory = new DefaultKafkaConsumerFactory(props);
+        JsonDeserializer<T> deserializer = new JsonDeserializer<>(dtoClass);
+        deserializer.configure(props, false);  // Настроить через props
+
+        DefaultKafkaConsumerFactory<String, T> factory = new DefaultKafkaConsumerFactory<>(props);
         factory.setKeyDeserializer(new StringDeserializer());
+        factory.setValueDeserializer(deserializer);
 
         return factory;
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TaskDto> kafkaListenerContainerFactory(
-            @Qualifier("consumerListenerFactory") ConsumerFactory<String, TaskDto> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, TaskDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(
+            @Qualifier("consumerListenerFactory") ConsumerFactory<String, T> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factoryBuilder(consumerFactory, factory);
         return factory;
     }
@@ -102,19 +106,24 @@ public class KafkaConfig {
     }
 
     @Bean("client")
-    public KafkaTemplate<String, TaskDto> kafkaTemplate(@Qualifier("producerClientFactory") ProducerFactory<String, TaskDto> producerFactory) {
+    public <T> KafkaTemplate<String, T> kafkaTemplate(@Qualifier("producerClientFactory") ProducerFactory<String, T> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
     @ConditionalOnProperty(value = "t1.kafka.producer.enable", havingValue = "true", matchIfMissing = true)
-    public KafkaClientProducer producerClient(@Qualifier("client") KafkaTemplate template) {
+    public KafkaClientProducer producerClient(@Qualifier("client") KafkaTemplate<String, TaskStatusUpdateDto> template) {
         template.setDefaultTopic(clientTopic);
         return new KafkaClientProducer(template);
     }
 
+    @Bean("consumerListenerFactory")
+    public ConsumerFactory<String, TaskStatusUpdateDto> consumerListenerFactory() {
+        return createConsumerFactory(TaskStatusUpdateDto.class);
+    }
+
     @Bean
-    public ProducerFactory<String, TaskDto> producerClientFactory() {
+    public <T> ProducerFactory<String, T> producerClientFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);

@@ -3,6 +3,7 @@ package org.makar.t1_tasks.kafka;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.makar.t1_tasks.dto.TaskDto;
+import org.makar.t1_tasks.dto.TaskStatusUpdateDto;
 import org.makar.t1_tasks.service.NotificationService;
 import org.makar.t1_tasks.service.TaskService;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -22,7 +23,7 @@ public class KafkaClientConsumer {
     @KafkaListener(id = "t1-tasks",
             topics = "t1_tasks_update_status",
             containerFactory = "kafkaListenerContainerFactory")
-    public void listener(@Payload TaskDto message,
+    public void listener(@Payload TaskStatusUpdateDto message,
                          Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                          @Header(KafkaHeaders.RECEIVED_KEY) String key) {

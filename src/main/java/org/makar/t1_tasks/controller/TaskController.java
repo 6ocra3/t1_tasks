@@ -21,9 +21,6 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
-    private final KafkaClientProducer kafkaClientProducer;
-    @Value("t1_tasks_update_status")
-    private String updateTopic;
 
     @GetMapping
     @LogResult
@@ -46,7 +43,6 @@ public class TaskController {
     @LogError
     public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody TaskDto taskDetails) {
         TaskDto taskDto = taskService.updateTask(id, taskDetails);
-        kafkaClientProducer.sendTo(updateTopic, taskDto);
         return ResponseEntity.ok(taskDto);
     }
 
