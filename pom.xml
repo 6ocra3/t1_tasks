@@ -78,6 +78,27 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Kafka client -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>3.5.0</version> <!-- используйте актуальную версию -->
+        </dependency>
+
+        <!-- Kafka Streams (если нужен) -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>3.5.0</version> <!-- используйте актуальную версию -->
+        </dependency>
+
+        <!-- Spring Kafka (если используешь Spring для интеграции с Kafka) -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>3.0.0</version> <!-- используйте актуальную версию -->
+        </dependency>
     </dependencies>
 
     <build>
@@ -88,5 +109,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
