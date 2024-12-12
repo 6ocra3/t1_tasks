@@ -1,5 +1,6 @@
 package org.makar.t1_tasks.controller;
 
+import lombok.AllArgsConstructor;
 import org.makar.t1_tasks.aspect.annotation.LogError;
 import org.makar.t1_tasks.aspect.annotation.LogResult;
 import org.makar.t1_tasks.aspect.annotation.LogTimeExecution;
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
 
-    @Autowired
     private TaskService taskService;
 
     @GetMapping
