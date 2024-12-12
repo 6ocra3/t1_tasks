@@ -14,7 +14,7 @@ public class ValidateAspect {
     private static final Logger logger = LoggerFactory.getLogger(ValidateAspect.class);
 
     @Before("@annotation(org.makar.t1_tasks.aspect.annotation.ValidateId)")
-    public void ValidateTaskId(JoinPoint joinPoint) {
+    public void validateTaskId(JoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().getName();
         Long id = (Long) joinPoint.getArgs()[0];
         if(id < 0){

@@ -14,7 +14,7 @@ public class LogAspect {
     private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
     @Around("@annotation(org.makar.t1_tasks.aspect.annotation.LogTimeExecution)")
-    public Object LogTimeExecution(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object logTimeExecution(ProceedingJoinPoint joinPoint) throws Throwable {
         Long start = System.nanoTime();
         Object result = null;
         String methodName = joinPoint.getSignature().getName();
@@ -40,6 +40,6 @@ public class LogAspect {
     @AfterThrowing(value = "@annotation(org.makar.t1_tasks.aspect.annotation.LogError)", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Exception e) {
         String methodName = joinPoint.getSignature().getName();
-        logger.info("{} ERROR: {}", methodName, e.getMessage());
+        logger.error("{} ERROR: {}", methodName, e.getMessage());
     }
 }
