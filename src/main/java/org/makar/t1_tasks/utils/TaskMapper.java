@@ -1,6 +1,7 @@
 package org.makar.t1_tasks.utils;
 
 import org.makar.t1_tasks.dto.TaskDto;
+import org.makar.t1_tasks.dto.TaskStatusUpdateDto;
 import org.makar.t1_tasks.model.Task;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ public class TaskMapper {
                 .title(taskDto.getTitle())
                 .description(taskDto.getDescription())
                 .userId(taskDto.getUserId())
+                .status(taskDto.getStatus())
                 .build();
     }
 
@@ -22,6 +24,15 @@ public class TaskMapper {
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .userId(task.getUserId())
+                .status(task.getStatus())
                 .build();
     }
+
+    public static TaskStatusUpdateDto toStatusUpdateDto(Task task){
+        return TaskStatusUpdateDto.builder()
+                .id(task.getId())
+                .status(task.getStatus())
+                .build();
+    }
+
 }
