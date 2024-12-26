@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class T1TasksApplicationTests {
+class T1TasksApplicationTests extends AbstractContainerBaseTest {
 
     @Test
     void contextLoads() {
