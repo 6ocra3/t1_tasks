@@ -1,24 +1,26 @@
 package org.makar.t1_tasks.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.makar.t1_tasks.aspect.annotation.LogError;
 import org.makar.t1_tasks.aspect.annotation.LogResult;
 import org.makar.t1_tasks.aspect.annotation.LogTimeExecution;
 import org.makar.t1_tasks.aspect.annotation.ValidateId;
 import org.makar.t1_tasks.dto.TaskDto;
+import org.makar.t1_tasks.kafka.KafkaClientProducer;
 import org.makar.t1_tasks.service.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private TaskService taskService;
+    private final TaskService taskService;
 
     @GetMapping
     @LogResult
@@ -40,7 +42,8 @@ public class TaskController {
     @PutMapping("/{id}")
     @LogError
     public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody TaskDto taskDetails) {
-        return ResponseEntity.ok(taskService.updateTask(id, taskDetails));
+        TaskDto taskDto = taskService.updateTask(id, taskDetails);
+        return ResponseEntity.ok(taskDto);
     }
 
     @DeleteMapping("/{id}")
